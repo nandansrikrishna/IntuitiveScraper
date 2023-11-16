@@ -5,8 +5,20 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import json
+from twilio.rest import Client
+import os
 
-URL = "https://careers.intuitive.com/en/jobs/?search=&type=Intern&pagesize=20#results"
+# Twilio setup
+account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+twilio_number = os.environ.get('TWILIO_NUMBER')
+your_phone_number = os.environ.get('YOUR_PHONE_NUMBER')
+
+client = Client(account_sid, auth_token)
+
+def load_config(filename):
+    with open(filename, 'r') as file:
+        return json.load(file)
 
 def get_job_listings(url):
     driver = webdriver.Chrome()
@@ -33,9 +45,23 @@ def load_previous_listings(filename):
     except FileNotFoundError:
         return {}
 
+def send_sms(message):
+    try:
+        message = client.messages.create(
+            to=your_phone_number,
+            from_=twilio_number,
+            body=message
+        )
+        print(f"Message sent: {message.sid}")
+    except Exception as e:
+        print(f"Error: {e}")
+
 def save_listings(filename, listings):
     with open(filename, "w") as file:
-        json.dump(listings, file)
+        json.dump(listings, file, indent=4)
+
+config = load_config('config.json')
+URL = config['url']
 
 previous_listings = load_previous_listings("listings.txt")
 
@@ -43,7 +69,10 @@ current_listings = get_job_listings(URL)
 
 for job in current_listings:
     if job.text not in previous_listings:
-        previous_listings[job.text] = "https://careers.intuitive.com" + job['href']
+        full_url = "https://careers.intuitive.com" + job['href']
+        previous_listings[job.text] = full_url
+        message = f"New Job Found: {job.text}, Link: {full_url}"
         print("New Job Found:", job.text)
+        send_sms(message)
 
 save_listings("listings.txt", previous_listings)
