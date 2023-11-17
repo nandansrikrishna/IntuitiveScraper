@@ -9,3 +9,5 @@ The script is designed to work with google's cloud services, specifically the gm
 Remove the "send_email()" function to simply run localy. It can be scheduled using linux cron.
 
 Additionally the script can be run in a cloud service's (like the google cloud project) compute instance to run at all times.
+
+For local use, create a python virtual environment and pip install the requirements.txt file. In a compute instance, it can simply be installed to the VM.
