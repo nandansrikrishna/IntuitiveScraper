@@ -1,2 +1,4 @@
 env
 setup_twilio_env.sh
+credentials.json
+token.pickle

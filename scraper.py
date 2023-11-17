@@ -5,16 +5,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import json
-from twilio.rest import Client
-import os
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from googleapiclient.discovery import build
+import os.path
+import pickle
+import base64
 
-# Twilio setup
-account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-twilio_number = os.environ.get('TWILIO_NUMBER')
-your_phone_number = os.environ.get('YOUR_PHONE_NUMBER')
-
-client = Client(account_sid, auth_token)
 
 def load_config(filename):
     with open(filename, 'r') as file:
@@ -22,7 +20,7 @@ def load_config(filename):
 
 def get_job_listings(url):
     driver = webdriver.Chrome()
-    driver.get(URL)
+    driver.get(url)
 
     # Wait for JavaScript to load (adjust the selector as needed)
     WebDriverWait(driver, 10).until(
@@ -45,16 +43,36 @@ def load_previous_listings(filename):
     except FileNotFoundError:
         return {}
 
-def send_sms(message):
-    try:
-        message = client.messages.create(
-            to=your_phone_number,
-            from_=twilio_number,
-            body=message
-        )
-        print(f"Message sent: {message.sid}")
-    except Exception as e:
-        print(f"Error: {e}")
+def service_gmail():
+    creds = None
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first time.
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', ['https://www.googleapis.com/auth/gmail.send'])
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+
+    service = build('gmail', 'v1', credentials=creds)
+    return service
+
+def send_email(subject, message, receiver_email):
+    service = service_gmail()
+    message = (service.users().messages().send(userId="me", body={
+        'raw': base64.urlsafe_b64encode(
+            f"To: {receiver_email}\r\nSubject: {subject}\r\n\r\n{message}".encode()
+        ).decode()
+    }).execute())
+    print(f"Message Id: {message['id']}")
 
 def save_listings(filename, listings):
     with open(filename, "w") as file:
@@ -71,8 +89,9 @@ for job in current_listings:
     if job.text not in previous_listings:
         full_url = "https://careers.intuitive.com" + job['href']
         previous_listings[job.text] = full_url
+        subject = "New Job Listing Found"
         message = f"New Job Found: {job.text}, Link: {full_url}"
         print("New Job Found:", job.text)
-        send_sms(message)
+        send_email(subject, message, "nsrikrishna06@gmail.com") 
 
 save_listings("listings.txt", previous_listings)
