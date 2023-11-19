@@ -1,8 +1,14 @@
 {
     "FPGA Design Engineer Intern": "https://careers.intuitive.com/en/jobs/743999944473443/JOB5879/fpga-design-engineer-intern/",
     "Vision Imaging Engineer Intern": "https://careers.intuitive.com/en/jobs/743999944459543/JOB5825/vision-imaging-engineer-intern/",
-    "Product Designer Intern": "https://careers.intuitive.com/en/jobs/743999944454313/JOB5931/product-designer-intern/",
     "Clinical Development Engineering Intern": "https://careers.intuitive.com/en/jobs/743999944236683/JOB5776/clinical-development-engineering-intern/",
     "Sterility Assurance and Device Reprocessing Intern": "https://careers.intuitive.com/en/jobs/743999944067981/JOB6045/sterility-assurance-and-device-reprocessing-intern/",
-    "Pflichtpraktikum im Bereich Konstruktion / Prozessentwicklung": "https://careers.intuitive.com/en/jobs/743999936776686/JOB5267/pflichtpraktikum-im-bereich-konstruktion-prozessentwicklung/"
+    "Software Engineer Intern": "https://careers.intuitive.com/en/jobs/743999944888193/JOB5804/software-engineer-intern/",
+    "Data Science Intern": "https://careers.intuitive.com/en/jobs/743999944875183/JOB5954/data-science-intern/",
+    "Product Designer Intern": "https://careers.intuitive.com/en/jobs/743999944454313/JOB5931/product-designer-intern/",
+    "Pflichtpraktikum im Bereich Konstruktion / Prozessentwicklung": "https://careers.intuitive.com/en/jobs/743999936776686/JOB5267/pflichtpraktikum-im-bereich-konstruktion-prozessentwicklung/",
+    "Electrical Engineering Intern": "https://careers.intuitive.com/en/jobs/743999944936633/JOB6197/electrical-engineering-intern/",
+    "Human Factors Engineer Intern": "https://careers.intuitive.com/en/jobs/743999944928714/JOB6127/human-factors-engineer-intern/",
+    "Genesis Product Manager Intern": "https://careers.intuitive.com/en/jobs/743999944911833/JOB5805/genesis-product-manager-intern/",
+    "Product Security  Engineer Intern": "https://careers.intuitive.com/en/jobs/743999944906553/JOB5828/product-security-engineer-intern/"
 }
